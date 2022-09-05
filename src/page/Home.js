@@ -149,7 +149,7 @@ const Home = () => {
               Expected Price: {formatter.format(price)}
             </Heading> */}
             <Heading as="h3" size="lg" style={{ fontFamily: 'Space Grotesk' }}>
-              Expected Price: ${priceFormatted}
+              Estimated Price: ${priceFormatted}
             </Heading>
           </Box>
         </Box>
