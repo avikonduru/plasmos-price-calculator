@@ -28,17 +28,45 @@ const Home = () => {
   const [mass, setMass] = useState(0);
   const [inclination, setInclination] = useState(90);
   const [price, setPrice] = useState(0);
+  const [priceFormatted, setPriceFormatted] = useState('0');
 
   var formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
   });
 
+  const nFormatter = (num, digits) => {
+    const lookup = [
+      { value: 1, symbol: '' },
+      { value: 1e3, symbol: 'k' },
+      { value: 1e6, symbol: 'M' },
+      { value: 1e9, symbol: 'G' },
+      { value: 1e12, symbol: 'T' },
+      { value: 1e15, symbol: 'P' },
+      { value: 1e18, symbol: 'E' },
+    ];
+    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+    var item = lookup
+      .slice()
+      .reverse()
+      .find(function (item) {
+        return num >= item.value;
+      });
+    return item
+      ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol
+      : '0';
+  };
+
   useEffect(() => {
-    if (orbit == 300) {
+    if (orbit >= 300 && orbit <= 550) {
       setPrice(mass * 12000);
+      setPriceFormatted(nFormatter(mass * 12000, 1));
+    } else if (orbit > 550) {
+      let multiplier = ((15000 - 12000) / (2000 - 550)) * orbit + 10862.06897;
+      setPrice(mass * multiplier);
+      setPriceFormatted(nFormatter(mass * multiplier, 1));
     } else {
-      setPrice(mass * 15000);
+      setPrice(0);
     }
   }, [mass, orbit]);
 
@@ -53,7 +81,13 @@ const Home = () => {
                 <NumberInput
                   min={300}
                   max={2000}
-                  onChange={valueString => setOrbit(parseInt(valueString))}
+                  onChange={valueString => {
+                    if (valueString) {
+                      setOrbit(parseInt(valueString));
+                    } else {
+                      setOrbit(0);
+                    }
+                  }}
                   value={`${orbit}`}
                 >
                   <NumberInputField />
@@ -70,7 +104,13 @@ const Home = () => {
                   defaultValue={0}
                   min={0}
                   max={500}
-                  onChange={valueString => setMass(parseInt(valueString))}
+                  onChange={valueString => {
+                    if (valueString) {
+                      setMass(parseInt(valueString));
+                    } else {
+                      setMass(0);
+                    }
+                  }}
                   value={`${mass}`}
                 >
                   <NumberInputField />
@@ -87,9 +127,13 @@ const Home = () => {
                   defaultValue={90}
                   min={0}
                   max={180}
-                  onChange={valueString =>
-                    setInclination(parseInt(valueString))
-                  }
+                  onChange={valueString => {
+                    if (valueString) {
+                      setInclination(parseInt(valueString));
+                    } else {
+                      setInclination(0);
+                    }
+                  }}
                   value={`${inclination}`}
                 >
                   <NumberInputField />
@@ -101,8 +145,11 @@ const Home = () => {
           </Flex>
 
           <Box>
-            <Heading as="h3" size="lg" style={{ fontFamily: 'Space Grotesk' }}>
+            {/* <Heading as="h3" size="lg" style={{ fontFamily: 'Space Grotesk' }}>
               Expected Price: {formatter.format(price)}
+            </Heading> */}
+            <Heading as="h3" size="lg" style={{ fontFamily: 'Space Grotesk' }}>
+              Expected Price: ${priceFormatted}
             </Heading>
           </Box>
         </Box>
