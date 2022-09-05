@@ -44,7 +44,7 @@ const Home = () => {
 
   return (
     <Fragment>
-      <Center w="100%" h="100vh" bg="grey.100">
+      <Center w="100%" h="100vh" bg="black">
         <Box>
           <Flex mb="5">
             <FormControl mr="5">
