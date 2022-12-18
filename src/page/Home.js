@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 // chakra
 import {
@@ -21,14 +22,19 @@ import {
   NumberDecrementStepper,
   InputRightAddon,
   InputGroup,
+  Stack,
 } from '@chakra-ui/react';
 
 const Home = () => {
+  const [isDesktopScreen, setIsDesktopScreen] = useState(false);
+
   const [orbit, setOrbit] = useState(1000);
   const [mass, setMass] = useState(0);
   const [inclination, setInclination] = useState(90);
   const [price, setPrice] = useState(0);
   const [priceFormatted, setPriceFormatted] = useState('0');
+
+  const isDesktop = useMediaQuery({ minWidth: 992 });
 
   var formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -70,12 +76,19 @@ const Home = () => {
     }
   }, [mass, orbit]);
 
+  useEffect(() => {
+    setIsDesktopScreen(isDesktop);
+  }, [isDesktop]);
+
   return (
     <Fragment>
       <Center w="100%" h="100vh" bg="black">
         <Box>
-          <Flex mb="5">
-            <FormControl mr="5">
+          <Stack
+            direction={isDesktopScreen ? 'row' : 'column'}
+            spacing={isDesktopScreen ? '10' : '4'}
+          >
+            <FormControl>
               <FormLabel>Desired Orbit</FormLabel>
               <InputGroup size="lg">
                 <NumberInput
@@ -97,7 +110,7 @@ const Home = () => {
               <FormHelperText>Range: 300km - 2,000km</FormHelperText>
             </FormControl>
 
-            <FormControl mr="5">
+            <FormControl>
               <FormLabel>Expected Payload Mass</FormLabel>
               <InputGroup size="lg">
                 <NumberInput
@@ -120,7 +133,7 @@ const Home = () => {
               <FormHelperText>Range: Up to 500kg</FormHelperText>
             </FormControl>
 
-            <FormControl mr="5">
+            <FormControl>
               <FormLabel>Inclination</FormLabel>
               <InputGroup size="lg">
                 <NumberInput
@@ -142,7 +155,8 @@ const Home = () => {
               </InputGroup>
               <FormHelperText>Range: 0° - 180°</FormHelperText>
             </FormControl>
-          </Flex>
+          </Stack>
+          <Flex mb="5"></Flex>
 
           <Box>
             {/* <Heading as="h3" size="lg" style={{ fontFamily: 'Space Grotesk' }}>
