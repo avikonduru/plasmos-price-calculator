@@ -23,6 +23,7 @@ import {
   InputRightAddon,
   InputGroup,
   Stack,
+  Checkbox,
 } from '@chakra-ui/react';
 
 const Home = () => {
@@ -33,6 +34,7 @@ const Home = () => {
   const [inclination, setInclination] = useState(90);
   const [price, setPrice] = useState(0);
   const [priceFormatted, setPriceFormatted] = useState('0');
+  const [isReentry, setIsReentry] = useState(false);
 
   const isDesktop = useMediaQuery({ minWidth: 992 });
 
@@ -64,17 +66,22 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (orbit >= 300 && orbit <= 550) {
-      setPrice(mass * 12000);
-      setPriceFormatted(nFormatter(mass * 12000, 1));
-    } else if (orbit > 550) {
-      let multiplier = ((15000 - 12000) / (2000 - 550)) * orbit + 10862.06897;
-      setPrice(mass * multiplier);
-      setPriceFormatted(nFormatter(mass * multiplier, 1));
+    if (isReentry) {
+      setPrice(mass * 1.5);
+      setPriceFormatted(nFormatter(mass * 1.5, 1));
     } else {
-      setPrice(0);
+      if (orbit >= 300 && orbit <= 550) {
+        setPrice(mass * 12000);
+        setPriceFormatted(nFormatter(mass * 12000, 1));
+      } else if (orbit > 550) {
+        let multiplier = ((15000 - 12000) / (2000 - 550)) * orbit + 10862.06897;
+        setPrice(mass * multiplier);
+        setPriceFormatted(nFormatter(mass * multiplier, 1));
+      } else {
+        setPrice(0);
+      }
     }
-  }, [mass, orbit]);
+  }, [mass, orbit, isReentry]);
 
   useEffect(() => {
     setIsDesktopScreen(isDesktop);
@@ -102,8 +109,12 @@ const Home = () => {
                     }
                   }}
                   value={`${orbit}`}
+                  disabled={isReentry}
                 >
-                  <NumberInputField />
+                  <NumberInputField
+                    borderWidth="2px"
+                    borderRadius="6px 0px 0px 6px"
+                  />
                 </NumberInput>
                 <InputRightAddon children="km" />
               </InputGroup>
@@ -126,7 +137,10 @@ const Home = () => {
                   }}
                   value={`${mass}`}
                 >
-                  <NumberInputField />
+                  <NumberInputField
+                    borderWidth="2px"
+                    borderRadius="6px 0px 0px 6px"
+                  />
                 </NumberInput>
                 <InputRightAddon children="kg" />
               </InputGroup>
@@ -148,15 +162,31 @@ const Home = () => {
                     }
                   }}
                   value={`${inclination}`}
+                  disabled={isReentry}
                 >
-                  <NumberInputField />
+                  <NumberInputField
+                    borderWidth="2px"
+                    borderRadius="6px 0px 0px 6px"
+                  />
                 </NumberInput>
                 <InputRightAddon children="°" />
               </InputGroup>
               <FormHelperText>Range: 0° - 180°</FormHelperText>
             </FormControl>
           </Stack>
-          <Flex mb="5"></Flex>
+
+          <Flex mt="4" mb="5">
+            <Checkbox
+              size="lg"
+              colorScheme="blue"
+              isChecked={isReentry}
+              onChange={e => {
+                setIsReentry(e.target.checked);
+              }}
+            >
+              Re-entry Payload
+            </Checkbox>
+          </Flex>
 
           <Box>
             {/* <Heading as="h3" size="lg" style={{ fontFamily: 'Space Grotesk' }}>
