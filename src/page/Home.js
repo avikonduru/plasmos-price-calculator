@@ -67,8 +67,8 @@ const Home = () => {
 
   useEffect(() => {
     if (isReentry) {
-      setPrice(mass * 1.5);
-      setPriceFormatted(nFormatter(mass * 1.5, 1));
+      setPrice(mass * 1.5 * 22000);
+      setPriceFormatted(nFormatter(mass * 1.5 * 22000, 1));
     } else {
       if (orbit >= 300 && orbit <= 550) {
         setPrice(mass * 12000);
