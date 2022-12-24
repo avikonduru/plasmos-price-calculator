@@ -95,7 +95,7 @@ const Home = () => {
 
   return (
     <Fragment>
-      <Center w="100%" h="100vh" bg="transparent">
+      <Center w="100%" h="100vh" bg="#0C1321">
         <Box>
           <Stack
             direction={isDesktopScreen ? 'row' : 'column'}
