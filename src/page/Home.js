@@ -67,8 +67,14 @@ const Home = () => {
 
   useEffect(() => {
     if (isReentry) {
-      setPrice(mass * 1.5 * 22000);
-      setPriceFormatted(nFormatter(mass * 1.5 * 22000, 1));
+      if (mass <= 2) {
+        console.log({ mass });
+        setPrice(2 * 1.5 * 22000);
+        setPriceFormatted(nFormatter(2 * 1.5 * 22000, 1));
+      } else {
+        setPrice(mass * 1.5 * 22000);
+        setPriceFormatted(nFormatter(mass * 1.5 * 22000, 1));
+      }
     } else {
       if (orbit >= 300 && orbit <= 550) {
         setPrice(mass * 12000);
@@ -89,12 +95,38 @@ const Home = () => {
 
   return (
     <Fragment>
-      <Center w="100%" h="100vh" bg="black">
+      <Center w="100%" h="100vh" bg="transparent">
         <Box>
           <Stack
             direction={isDesktopScreen ? 'row' : 'column'}
             spacing={isDesktopScreen ? '10' : '4'}
           >
+            <FormControl>
+              <FormLabel>Expected Payload Mass</FormLabel>
+              <InputGroup size="lg">
+                <NumberInput
+                  defaultValue={0}
+                  min={0}
+                  max={isReentry ? 6 : 500}
+                  onChange={valueString => {
+                    if (valueString) {
+                      setMass(parseInt(valueString));
+                    } else {
+                      setMass(0);
+                    }
+                  }}
+                  value={`${mass}`}
+                >
+                  <NumberInputField
+                    borderWidth="2px"
+                    borderRadius="6px 0px 0px 6px"
+                  />
+                </NumberInput>
+                <InputRightAddon children="kg" />
+              </InputGroup>
+              <FormHelperText>Range: Up to 500kg</FormHelperText>
+            </FormControl>
+
             <FormControl>
               <FormLabel>Desired Orbit</FormLabel>
               <InputGroup size="lg">
@@ -119,32 +151,6 @@ const Home = () => {
                 <InputRightAddon children="km" />
               </InputGroup>
               <FormHelperText>Range: 300km - 2,000km</FormHelperText>
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Expected Payload Mass</FormLabel>
-              <InputGroup size="lg">
-                <NumberInput
-                  defaultValue={0}
-                  min={0}
-                  max={500}
-                  onChange={valueString => {
-                    if (valueString) {
-                      setMass(parseInt(valueString));
-                    } else {
-                      setMass(0);
-                    }
-                  }}
-                  value={`${mass}`}
-                >
-                  <NumberInputField
-                    borderWidth="2px"
-                    borderRadius="6px 0px 0px 6px"
-                  />
-                </NumberInput>
-                <InputRightAddon children="kg" />
-              </InputGroup>
-              <FormHelperText>Range: Up to 500kg</FormHelperText>
             </FormControl>
 
             <FormControl>
