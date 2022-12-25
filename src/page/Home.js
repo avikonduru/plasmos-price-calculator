@@ -127,7 +127,7 @@ const Home = () => {
               <FormHelperText>Range: Up to 500kg</FormHelperText>
             </FormControl>
 
-            <FormControl>
+            <FormControl isDisabled={isReentry}>
               <FormLabel>Desired Orbit</FormLabel>
               <InputGroup size="lg">
                 <NumberInput
@@ -141,7 +141,6 @@ const Home = () => {
                     }
                   }}
                   value={`${orbit}`}
-                  disabled={isReentry}
                 >
                   <NumberInputField
                     borderWidth="2px"
@@ -153,7 +152,7 @@ const Home = () => {
               <FormHelperText>Range: 300km - 2,000km</FormHelperText>
             </FormControl>
 
-            <FormControl>
+            <FormControl isDisabled={isReentry}>
               <FormLabel>Inclination</FormLabel>
               <InputGroup size="lg">
                 <NumberInput
@@ -168,7 +167,6 @@ const Home = () => {
                     }
                   }}
                   value={`${inclination}`}
-                  disabled={isReentry}
                 >
                   <NumberInputField
                     borderWidth="2px"
