@@ -118,7 +118,7 @@ const Home = () => {
                   value={`${mass}`}
                 >
                   <NumberInputField
-                    borderWidth="2px"
+                    borderWidth="3px"
                     borderRadius="6px 0px 0px 6px"
                   />
                 </NumberInput>
@@ -143,11 +143,15 @@ const Home = () => {
                   value={`${orbit}`}
                 >
                   <NumberInputField
-                    borderWidth="2px"
+                    borderWidth="3px"
                     borderRadius="6px 0px 0px 6px"
+                    borderColor={isReentry ? '#252933' : '#333945'}
                   />
                 </NumberInput>
-                <InputRightAddon children="km" />
+                <InputRightAddon
+                  children="km"
+                  bg={isReentry ? '#252933' : '#333945'}
+                />
               </InputGroup>
               <FormHelperText>Range: 300km - 2,000km</FormHelperText>
             </FormControl>
@@ -169,11 +173,15 @@ const Home = () => {
                   value={`${inclination}`}
                 >
                   <NumberInputField
-                    borderWidth="2px"
+                    borderWidth="3px"
                     borderRadius="6px 0px 0px 6px"
+                    borderColor={isReentry ? '#252933' : '#333945'}
                   />
                 </NumberInput>
-                <InputRightAddon children="°" />
+                <InputRightAddon
+                  children="°"
+                  bg={isReentry ? '#252933' : '#333945'}
+                />
               </InputGroup>
               <FormHelperText>Range: 0° - 180°</FormHelperText>
             </FormControl>
