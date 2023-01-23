@@ -25,6 +25,7 @@ import {
   Stack,
   Checkbox,
   Select,
+  Text,
 } from '@chakra-ui/react';
 
 const Home = () => {
@@ -35,9 +36,10 @@ const Home = () => {
   const [inclination, setInclination] = useState(90);
   const [price, setPrice] = useState(0);
   const [priceFormatted, setPriceFormatted] = useState('0');
+  const [cubicVolume, setCubicVolume] = useState('1');
+  const [timeInOrbit, setTimeInOrbit] = useState('3m');
 
-  const [isReentry, setIsReentry] = useState(false);
-  const [isExpendable, setIsExpendable] = useState(true);
+  const [isLastMile, setIsLastMile] = useState(false);
 
   const isDesktop = useMediaQuery({ minWidth: 992 });
 
@@ -69,7 +71,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (isExpendable) {
+    if (isLastMile) {
       if (orbit >= 300 && orbit <= 550) {
         setPrice(mass * 12000);
         setPriceFormatted(nFormatter(mass * 12000, 1));
@@ -82,15 +84,28 @@ const Home = () => {
       }
     } else {
       if (mass <= 2) {
-        console.log({ mass });
-        setPrice(2 * 1.5 * 22000);
-        setPriceFormatted(nFormatter(2 * 1.5 * 22000, 1));
+        const cVol = 4500000 * parseFloat(cubicVolume);
+        let tInOrbit = 0;
+        if (timeInOrbit === '6m') {
+          tInOrbit = 300000;
+        } else if (timeInOrbit === '3m') {
+          tInOrbit = 600000;
+        }
+        setPrice(2 * 1.5 * 22000 + cVol + tInOrbit);
+        setPriceFormatted(nFormatter(2 * 1.5 * 22000 + cVol + tInOrbit, 1));
       } else {
-        setPrice(mass * 1.5 * 22000);
-        setPriceFormatted(nFormatter(mass * 1.5 * 22000, 1));
+        const cVol = 4500000 * parseFloat(cubicVolume);
+        let tInOrbit = 0;
+        if (timeInOrbit === '6m') {
+          tInOrbit = 300000;
+        } else if (timeInOrbit === '3m') {
+          tInOrbit = 600000;
+        }
+        setPrice(mass * 1.5 * 22000 + cVol + tInOrbit);
+        setPriceFormatted(nFormatter(mass * 1.5 * 22000 + cVol + tInOrbit, 1));
       }
     }
-  }, [mass, orbit, isExpendable]);
+  }, [mass, orbit, cubicVolume, timeInOrbit, isLastMile]);
 
   useEffect(() => {
     setIsDesktopScreen(isDesktop);
@@ -110,7 +125,7 @@ const Home = () => {
                 <NumberInput
                   defaultValue={0}
                   min={0}
-                  max={isExpendable ? 500 : 6}
+                  max={isLastMile ? 500 : 6}
                   onChange={valueString => {
                     if (valueString) {
                       setMass(parseInt(valueString));
@@ -123,6 +138,7 @@ const Home = () => {
                   <NumberInputField
                     borderWidth="3px"
                     borderRadius="6px 0px 0px 6px"
+                    borderColor="#333945"
                   />
                 </NumberInput>
                 <InputRightAddon children="kg" />
@@ -130,47 +146,7 @@ const Home = () => {
               <FormHelperText>Range: Up to 500kg</FormHelperText>
             </FormControl>
 
-            {isExpendable ? (
-              <Fragment>
-                <FormControl>
-                  <FormLabel>Cubic Volume</FormLabel>
-                  <InputGroup size="lg">
-                    <Select
-                      placeholder="Select option"
-                      size="lg"
-                      borderWidth="3px"
-                      borderRadius="6px 0px 0px 6px"
-                      borderColor={'#333945'}
-                    >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
-                    </Select>
-                    <InputRightAddon children="kg" />
-                  </InputGroup>
-                  <FormHelperText>Range: Up to 500kg</FormHelperText>
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Time in Orbit</FormLabel>
-                  <InputGroup size="lg">
-                    <Select
-                      placeholder="Select option"
-                      size="lg"
-                      borderWidth="3px"
-                      borderRadius="6px 0px 0px 6px"
-                      borderColor={'#333945'}
-                    >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
-                    </Select>
-                    <InputRightAddon children="kg" />
-                  </InputGroup>
-                  <FormHelperText>Range: Up to 500kg</FormHelperText>
-                </FormControl>
-              </Fragment>
-            ) : (
+            {isLastMile ? (
               <Fragment>
                 <FormControl>
                   <FormLabel>Desired Orbit</FormLabel>
@@ -225,6 +201,57 @@ const Home = () => {
                   <FormHelperText>Range: 0° - 180°</FormHelperText>
                 </FormControl>
               </Fragment>
+            ) : (
+              <Fragment>
+                <FormControl>
+                  <FormLabel>Cubic Volume</FormLabel>
+                  <InputGroup size="lg">
+                    <Select
+                      size="lg"
+                      borderWidth="3px"
+                      borderRadius="6px 0px 0px 6px"
+                      borderColor={'#333945'}
+                      value={cubicVolume}
+                      onChange={e => {
+                        setCubicVolume(e.target.value);
+                      }}
+                    >
+                      <option value="1">1</option>
+                      <option value=".5">.5</option>
+                      <option value=".25">.25</option>
+                    </Select>
+                    <InputRightAddon
+                      children={
+                        <Text>
+                          m<sup>3</sup>
+                        </Text>
+                      }
+                    />
+                  </InputGroup>
+                </FormControl>
+
+                {/* $4.5 milliom */}
+
+                <FormControl>
+                  <FormLabel>Time in Orbit</FormLabel>
+                  <Select
+                    size="lg"
+                    borderWidth="3px"
+                    borderColor={'#333945'}
+                    defaultValue="3m"
+                    value={timeInOrbit}
+                    onChange={e => {
+                      setTimeInOrbit(e.target.value);
+                    }}
+                  >
+                    <option value="3m">3 months</option>
+                    {/* + 600K milliom */}
+                    <option value="6m">6 months</option>
+                    {/* + 300K milliom */}
+                    <option value="1y">1 year</option>
+                  </Select>
+                </FormControl>
+              </Fragment>
             )}
           </Stack>
 
@@ -242,12 +269,12 @@ const Home = () => {
             <Checkbox
               size="lg"
               colorScheme="blue"
-              isChecked={isExpendable}
+              isChecked={isLastMile}
               onChange={e => {
-                setIsExpendable(e.target.checked);
+                setIsLastMile(e.target.checked);
               }}
             >
-              Expendable Payload
+              Last Mile Delivery
             </Checkbox>
           </Flex>
 
