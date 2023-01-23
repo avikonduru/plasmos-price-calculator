@@ -24,6 +24,7 @@ import {
   InputGroup,
   Stack,
   Checkbox,
+  Select,
 } from '@chakra-ui/react';
 
 const Home = () => {
@@ -34,7 +35,9 @@ const Home = () => {
   const [inclination, setInclination] = useState(90);
   const [price, setPrice] = useState(0);
   const [priceFormatted, setPriceFormatted] = useState('0');
+
   const [isReentry, setIsReentry] = useState(false);
+  const [isExpendable, setIsExpendable] = useState(true);
 
   const isDesktop = useMediaQuery({ minWidth: 992 });
 
@@ -66,16 +69,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (isReentry) {
-      if (mass <= 2) {
-        console.log({ mass });
-        setPrice(2 * 1.5 * 22000);
-        setPriceFormatted(nFormatter(2 * 1.5 * 22000, 1));
-      } else {
-        setPrice(mass * 1.5 * 22000);
-        setPriceFormatted(nFormatter(mass * 1.5 * 22000, 1));
-      }
-    } else {
+    if (isExpendable) {
       if (orbit >= 300 && orbit <= 550) {
         setPrice(mass * 12000);
         setPriceFormatted(nFormatter(mass * 12000, 1));
@@ -86,8 +80,17 @@ const Home = () => {
       } else {
         setPrice(0);
       }
+    } else {
+      if (mass <= 2) {
+        console.log({ mass });
+        setPrice(2 * 1.5 * 22000);
+        setPriceFormatted(nFormatter(2 * 1.5 * 22000, 1));
+      } else {
+        setPrice(mass * 1.5 * 22000);
+        setPriceFormatted(nFormatter(mass * 1.5 * 22000, 1));
+      }
     }
-  }, [mass, orbit, isReentry]);
+  }, [mass, orbit, isExpendable]);
 
   useEffect(() => {
     setIsDesktopScreen(isDesktop);
@@ -107,7 +110,7 @@ const Home = () => {
                 <NumberInput
                   defaultValue={0}
                   min={0}
-                  max={isReentry ? 6 : 500}
+                  max={isExpendable ? 500 : 6}
                   onChange={valueString => {
                     if (valueString) {
                       setMass(parseInt(valueString));
@@ -127,68 +130,106 @@ const Home = () => {
               <FormHelperText>Range: Up to 500kg</FormHelperText>
             </FormControl>
 
-            <FormControl isDisabled={isReentry}>
-              <FormLabel>Desired Orbit</FormLabel>
-              <InputGroup size="lg">
-                <NumberInput
-                  min={300}
-                  max={2000}
-                  onChange={valueString => {
-                    if (valueString) {
-                      setOrbit(parseInt(valueString));
-                    } else {
-                      setOrbit(0);
-                    }
-                  }}
-                  value={`${orbit}`}
-                >
-                  <NumberInputField
-                    borderWidth="3px"
-                    borderRadius="6px 0px 0px 6px"
-                    borderColor={isReentry ? '#252933' : '#333945'}
-                  />
-                </NumberInput>
-                <InputRightAddon
-                  children="km"
-                  bg={isReentry ? '#252933' : '#333945'}
-                />
-              </InputGroup>
-              <FormHelperText>Range: 300km - 2,000km</FormHelperText>
-            </FormControl>
+            {isExpendable ? (
+              <Fragment>
+                <FormControl>
+                  <FormLabel>Cubic Volume</FormLabel>
+                  <InputGroup size="lg">
+                    <Select
+                      placeholder="Select option"
+                      size="lg"
+                      borderWidth="3px"
+                      borderRadius="6px 0px 0px 6px"
+                      borderColor={'#333945'}
+                    >
+                      <option value="option1">Option 1</option>
+                      <option value="option2">Option 2</option>
+                      <option value="option3">Option 3</option>
+                    </Select>
+                    <InputRightAddon children="kg" />
+                  </InputGroup>
+                  <FormHelperText>Range: Up to 500kg</FormHelperText>
+                </FormControl>
 
-            <FormControl isDisabled={isReentry}>
-              <FormLabel>Inclination</FormLabel>
-              <InputGroup size="lg">
-                <NumberInput
-                  defaultValue={90}
-                  min={0}
-                  max={180}
-                  onChange={valueString => {
-                    if (valueString) {
-                      setInclination(parseInt(valueString));
-                    } else {
-                      setInclination(0);
-                    }
-                  }}
-                  value={`${inclination}`}
-                >
-                  <NumberInputField
-                    borderWidth="3px"
-                    borderRadius="6px 0px 0px 6px"
-                    borderColor={isReentry ? '#252933' : '#333945'}
-                  />
-                </NumberInput>
-                <InputRightAddon
-                  children="°"
-                  bg={isReentry ? '#252933' : '#333945'}
-                />
-              </InputGroup>
-              <FormHelperText>Range: 0° - 180°</FormHelperText>
-            </FormControl>
+                <FormControl>
+                  <FormLabel>Time in Orbit</FormLabel>
+                  <InputGroup size="lg">
+                    <Select
+                      placeholder="Select option"
+                      size="lg"
+                      borderWidth="3px"
+                      borderRadius="6px 0px 0px 6px"
+                      borderColor={'#333945'}
+                    >
+                      <option value="option1">Option 1</option>
+                      <option value="option2">Option 2</option>
+                      <option value="option3">Option 3</option>
+                    </Select>
+                    <InputRightAddon children="kg" />
+                  </InputGroup>
+                  <FormHelperText>Range: Up to 500kg</FormHelperText>
+                </FormControl>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <FormControl>
+                  <FormLabel>Desired Orbit</FormLabel>
+                  <InputGroup size="lg">
+                    <NumberInput
+                      min={300}
+                      max={2000}
+                      onChange={valueString => {
+                        if (valueString) {
+                          setOrbit(parseInt(valueString));
+                        } else {
+                          setOrbit(0);
+                        }
+                      }}
+                      value={`${orbit}`}
+                    >
+                      <NumberInputField
+                        borderWidth="3px"
+                        borderRadius="6px 0px 0px 6px"
+                        borderColor="#333945"
+                      />
+                    </NumberInput>
+                    <InputRightAddon children="km" bg="#333945" />
+                  </InputGroup>
+                  <FormHelperText>Range: 300km - 2,000km</FormHelperText>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Inclination</FormLabel>
+                  <InputGroup size="lg">
+                    <NumberInput
+                      defaultValue={90}
+                      min={0}
+                      max={180}
+                      onChange={valueString => {
+                        if (valueString) {
+                          setInclination(parseInt(valueString));
+                        } else {
+                          setInclination(0);
+                        }
+                      }}
+                      value={`${inclination}`}
+                    >
+                      <NumberInputField
+                        borderWidth="3px"
+                        borderRadius="6px 0px 0px 6px"
+                        borderColor="#333945"
+                      />
+                    </NumberInput>
+                    <InputRightAddon children="°" bg="#333945" />
+                  </InputGroup>
+                  <FormHelperText>Range: 0° - 180°</FormHelperText>
+                </FormControl>
+              </Fragment>
+            )}
           </Stack>
 
           <Flex mt="4" mb="5">
-            <Checkbox
+            {/* <Checkbox
               size="lg"
               colorScheme="blue"
               isChecked={isReentry}
@@ -197,13 +238,20 @@ const Home = () => {
               }}
             >
               Re-entry Payload
+            </Checkbox> */}
+            <Checkbox
+              size="lg"
+              colorScheme="blue"
+              isChecked={isExpendable}
+              onChange={e => {
+                setIsExpendable(e.target.checked);
+              }}
+            >
+              Expendable Payload
             </Checkbox>
           </Flex>
 
           <Box>
-            {/* <Heading as="h3" size="lg" style={{ fontFamily: 'Space Grotesk' }}>
-              Expected Price: {formatter.format(price)}
-            </Heading> */}
             <Heading as="h3" size="lg" style={{ fontFamily: 'Space Grotesk' }}>
               Estimated Price: ${priceFormatted}
             </Heading>
